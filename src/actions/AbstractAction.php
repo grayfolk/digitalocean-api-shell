@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\actions;
 
-trait ActionTrait
+abstract class AbstractAction
 {
     public function clearCache(): void
     {

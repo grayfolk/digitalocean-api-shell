@@ -12,7 +12,7 @@ use Exception;
 /**
  * @author grayfolk
  */
-class AccountAction implements ActionInterface
+class AccountAction extends AbstractAction
 {
     /**
      * @var AccountAction

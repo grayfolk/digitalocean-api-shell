@@ -10,10 +10,8 @@ use Exception;
 /**
  * @author grayfolk
  */
-class ChangeAccountAction implements ActionInterface
+class ChangeAccountAction extends AbstractAction
 {
-    use ActionTrait;
-
     /**
      * @var ChangeAccountAction
      */

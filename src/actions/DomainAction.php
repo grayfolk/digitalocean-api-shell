@@ -12,7 +12,7 @@ use Yiisoft\Arrays\ArrayHelper;
 /**
  * @author grayfolk
  */
-class DomainAction implements ActionInterface
+class DomainAction extends AbstractAction
 {
     /**
      * @var DomainAction

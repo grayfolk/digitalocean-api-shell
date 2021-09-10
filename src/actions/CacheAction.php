@@ -10,10 +10,8 @@ use Exception;
 /**
  * @author grayfolk
  */
-class CacheAction implements ActionInterface
+class CacheAction extends AbstractAction
 {
-    use ActionTrait;
-
     /**
      * @var CacheAction
      */
