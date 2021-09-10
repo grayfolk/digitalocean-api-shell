@@ -45,9 +45,14 @@ class App
     public string $action;
 
     /**
+     * @var array|false|false[]|string[]|null
+     */
+    public ?array $options = null;
+
+    /**
      * @var bool
      */
-    public bool $dryRun;
+    public bool $isDryRun;
 
     /**
      * @var CLImate
@@ -65,7 +70,9 @@ class App
 
         $this->climate->clear();
 
-        $this->dryRun = !isset(getopt('f')['f']);
+        $this->options = getopt('wf::');
+
+        $this->isDryRun = !isset($this->options['w']);
     }
 
     /**
@@ -126,13 +133,15 @@ class App
 
         $className = self::ACTIONS[$action];
 
-        if ($this->dryRun) {
-            $this->climate->info('Dry run mode active. No changes will be applied.')->red('If you want to apply changes run file with -f option.');
-        } else {
-            $this->climate->red('Working mode active. All changes will be applied.');
-        }
-
         try {
+            if ($className::getInstance($this)->alert) {
+                if ($this->isDryRun) {
+                    $this->climate->info('Dry run mode active. No changes will be applied.')->red('If you want to apply changes run file with -w option.');
+                } else {
+                    $this->climate->red('Working mode active. All changes will be applied.');
+                }
+            }
+
             $this->action = $className::getInstance($this)->run();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());

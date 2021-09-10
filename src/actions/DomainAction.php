@@ -40,6 +40,11 @@ class DomainAction extends AbstractAction
     public array $domainRecords = [];
 
     /**
+     * @var bool
+     */
+    public bool $alert = true;
+
+    /**
      * @param App $app
      */
     protected function __construct(App $app)
@@ -48,6 +53,7 @@ class DomainAction extends AbstractAction
     }
 
     /**
+     * @param App $app
      * @return DomainAction
      */
     public static function getInstance(App $app): self
@@ -73,6 +79,16 @@ class DomainAction extends AbstractAction
         }
 
         $this->domain = $this->app->radio('Select domain:', ArrayHelper::getColumn($this->domains, 'name'));
+
+        try {
+            // Save zone file
+            $file = sprintf('./tmp/%s-%s.conf', $this->domain, microtime(true));
+            $domain = $this->app->client->domain()->getByName($this->domain);
+            file_put_contents($file, $domain->zoneFile);
+            $this->app->climate->info("Zone file backuped: {$file}");
+        } catch (ExceptionInterface $e) {
+            throw new Exception($e->getMessage());
+        }
 
         if (!$this->domainRecords) {
             try {
@@ -106,7 +122,7 @@ class DomainAction extends AbstractAction
         $ip = $this->app->radio('Select domain ip (A or AAAA):', $ips);
 
         try {
-            if (!$this->app->dryRun) {
+            if (!$this->app->isDryRun) {
                 $this->app->client->domain()->remove($this->domain);
             }
         } catch (ExceptionInterface $e) {
@@ -116,7 +132,7 @@ class DomainAction extends AbstractAction
         $this->app->auth($this->app->accounts[$newAccount]);
 
         try {
-            if (!$this->app->dryRun) {
+            if (!$this->app->isDryRun) {
                 $this->app->client->domain()->create($this->domain, $ip);
             }
         } catch (ExceptionInterface $e) {
@@ -126,7 +142,7 @@ class DomainAction extends AbstractAction
         $data = [];
 
         foreach ($this->domainRecords as $value) {
-            if ($this->app->dryRun) {
+            if ($this->app->isDryRun) {
                 $data[] = [
                     'Type' => $value->type,
                     'Name' => $value->name,
@@ -154,12 +170,12 @@ class DomainAction extends AbstractAction
                 $value->data = sprintf('%s.', trim($value->data, '.'));
             }
 
-            if (!$this->app->dryRun) {
+            if (!$this->app->isDryRun) {
                 $this->app->climate->green(sprintf('<light_blue>Adding:</light_blue> %s: %s <bold><black><background_light_gray>%s</background_light_gray></black></bold>', $value->type, $value->name, $value->data));
             }
 
             try {
-                if (!$this->app->dryRun) {
+                if (!$this->app->isDryRun) {
                     $this->app->client->domainRecord()->create($this->domain, $value->type, $value->name, $value->data, $value->priority, $value->port, $value->weight, $value->flags, $value->tag, $value->ttl);
                 }
             } catch (ExceptionInterface $e) {
@@ -167,7 +183,7 @@ class DomainAction extends AbstractAction
             }
         }
 
-        if ($this->app->dryRun) {
+        if ($this->app->isDryRun) {
             $this->app->climate->lightCyan()->table($data);
         } else {
             try {

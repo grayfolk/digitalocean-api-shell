@@ -31,6 +31,7 @@ class CacheAction extends AbstractAction
     }
 
     /**
+     * @param App $app
      * @return CacheAction
      */
     public static function getInstance(App $app): self

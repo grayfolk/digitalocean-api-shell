@@ -30,6 +30,10 @@
         "sort-packages": true
     },
     "scripts": {
+        "post-install-cmd": [
+            "chmod +x do.sh",
+            "chmod 777 tmp"
+        ],
         "cs:check": "php-cs-fixer fix --verbose --ansi --show-progress=dots --diff --dry-run --config ./.php-cs.php",
         "cs:fix": "php-cs-fixer fix --verbose --ansi --show-progress=dots --config .php-cs.php"
     }

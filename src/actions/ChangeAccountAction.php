@@ -31,6 +31,7 @@ class ChangeAccountAction extends AbstractAction
     }
 
     /**
+     * @param App $app
      * @return ChangeAccountAction
      */
     public static function getInstance(App $app): self

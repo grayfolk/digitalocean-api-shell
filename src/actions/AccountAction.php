@@ -38,6 +38,7 @@ class AccountAction extends AbstractAction
     }
 
     /**
+     * @param App $app
      * @return AccountAction
      */
     public static function getInstance(App $app): self

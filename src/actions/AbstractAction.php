@@ -6,6 +6,8 @@ namespace App\actions;
 
 abstract class AbstractAction
 {
+    public bool $alert = false;
+
     public function clearCache(): void
     {
     }
