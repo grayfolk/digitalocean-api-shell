@@ -52,7 +52,7 @@ class App
     /**
      * @var bool
      */
-    public bool $isDryRun;
+    public bool $isDryRun = true;
 
     /**
      * @var CLImate
