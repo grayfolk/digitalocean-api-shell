@@ -98,13 +98,15 @@ class DomainAction extends AbstractAction
             }
         }
 
-        unset($this->app->accounts[$this->app->account]);
+        $accounts = $this->app->accounts;
 
-        if (!\count($this->app->accounts)) {
+        unset($accounts[$this->app->account]);
+
+        if (!\count($accounts)) {
             throw new Exception("No accounts to move {$this->domain}");
         }
 
-        $newAccount = $this->app->radio("Select account to move {$this->domain}", array_keys($this->app->accounts));
+        $newAccount = $this->app->radio("Select account to move {$this->domain}", array_keys($accounts));
 
         $ips = [];
 
@@ -205,6 +207,9 @@ class DomainAction extends AbstractAction
         }
 
         try {
+            // Restore first account
+            $this->app->auth($this->app->accounts[$this->app->account]);
+
             $this->app->selectAction();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());

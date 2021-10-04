@@ -55,13 +55,7 @@ class AccountAction extends AbstractAction
      */
     public function run(): void
     {
-        if (!$this->info) {
-            try {
-                $this->info = $this->app->client->account()->getUserInformation();
-            } catch (ExceptionInterface $e) {
-                throw new Exception($e->getMessage());
-            }
-        }
+        $this->getInfo();
 
         $this->app->climate->lightCyan()->table([
             [
@@ -86,6 +80,17 @@ class AccountAction extends AbstractAction
             $this->app->selectAction();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
+        }
+    }
+
+    public function getInfo(): void
+    {
+        if (!$this->info) {
+            try {
+                $this->info = $this->app->client->account()->getUserInformation();
+            } catch (ExceptionInterface $e) {
+                throw new Exception($e->getMessage());
+            }
         }
     }
 

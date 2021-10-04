@@ -4,7 +4,9 @@
     "require": {
         "php": "^7.4",
         "ext-curl": "*",
+        "ext-gmp": "*",
         "ext-json": "*",
+        "badcow/dns": "^4.1",
         "guzzlehttp/guzzle": "^7.2",
         "http-interop/http-factory-guzzle": "^1.0",
         "league/climate": "^3.7",

@@ -9,7 +9,6 @@ use App\actions\CacheAction;
 use App\actions\ChangeAccountAction;
 use App\actions\DomainAction;
 use DigitalOceanV2\Client;
-use DigitalOceanV2\Exception\ExceptionInterface;
 use Exception;
 use League\CLImate\CLImate;
 use Yiisoft\Arrays\ArrayHelper;
@@ -117,11 +116,7 @@ class App
 
         $this->client->authenticate($apiKey);
 
-        try {
-            $this->client->account()->getUserInformation();
-        } catch (ExceptionInterface $e) {
-            throw new Exception($e->getMessage());
-        }
+        AccountAction::getInstance($this)->getInfo();
     }
 
     /**
@@ -131,6 +126,7 @@ class App
     {
         $action = $this->radio('Select what do you want:', array_keys(self::ACTIONS));
 
+        /** @var $className AccountAction|CacheAction|ChangeAccountAction|DomainAction */
         $className = self::ACTIONS[$action];
 
         try {
@@ -142,7 +138,7 @@ class App
                 }
             }
 
-            $this->action = $className::getInstance($this)->run();
+            $className::getInstance($this)->run();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
