@@ -77,5 +77,4 @@ fabric.properties
 
 /vendor/
 /accounts.json
-/tmp/
 /.php-cs-fixer.cache
