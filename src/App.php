@@ -12,7 +12,6 @@ use App\actions\ExitAction;
 use DigitalOceanV2\Client;
 use Exception;
 use League\CLImate\CLImate;
-use Yiisoft\Arrays\ArrayHelper;
 
 /**
  * @author grayfolk
@@ -27,7 +26,7 @@ class App
         'Move domain to another account' => DomainAction::class,
         'Change account' => ChangeAccountAction::class,
         'Clear cache' => CacheAction::class,
-        'Exit' => ExitAction::class,
+        'Exit (or Ctrl+C)' => ExitAction::class,
     ];
 
     /**
@@ -38,7 +37,7 @@ class App
     /**
      * @var array
      */
-    public array $accounts;
+    public array $accounts = [];
 
     /**
      * @var string
@@ -78,33 +77,42 @@ class App
 
     /**
      * @param mixed $excludes
+     * @param mixed $message
      * @throws Exception
      */
-    public function selectAccount($excludes = []): void
+    public function selectAccount($message = 'Select DigitalOcean account:', $excludes = []): string
     {
-        if (!file_exists('accounts.json') || !is_file('accounts.json') || !is_readable('accounts.json')) {
-            throw new Exception('accounts.json not exist');
+        if (!$this->accounts) {
+            if (!file_exists('accounts.json') || !is_file('accounts.json') || !is_readable('accounts.json')) {
+                throw new Exception('accounts.json not exist');
+            }
+
+            $json = file_get_contents('accounts.json');
+
+            $this->accounts = json_decode($json, true);
         }
-
-        $json = file_get_contents('accounts.json');
-
-        $this->accounts = json_decode($json, true);
 
         if (!\is_array($this->accounts)) {
             throw new Exception('No accounts found in accounts.json');
         }
 
+        $accounts = $this->accounts;
+
         if ($excludes) {
-            $this->accounts = ArrayHelper::remove($this->accounts, $excludes);
+            foreach ($excludes as $exclude) {
+                unset($accounts[$exclude]);
+            }
         }
 
-        if (!\count($this->accounts)) {
+        if (!\count($accounts)) {
             throw new Exception('No accounts found in accounts.json');
         }
 
-        $this->account = $this->radio('Select DigitalOcean account:', array_keys($this->accounts));
+        $this->account = $this->radio($message, array_keys($accounts));
 
         $this->auth($this->accounts[$this->account]);
+
+        return $this->account;
     }
 
     /**

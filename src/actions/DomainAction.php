@@ -27,6 +27,16 @@ class DomainAction extends AbstractAction
     /**
      * @var string
      */
+    public string $accountFrom;
+
+    /**
+     * @var string
+     */
+    public string $accountTo;
+
+    /**
+     * @var string
+     */
     public string $domain;
 
     /**
@@ -50,6 +60,8 @@ class DomainAction extends AbstractAction
     protected function __construct(App $app)
     {
         $this->app = $app;
+
+        $this->accountFrom = $this->app->account;
     }
 
     /**
@@ -98,15 +110,7 @@ class DomainAction extends AbstractAction
             }
         }
 
-        $accounts = $this->app->accounts;
-
-        unset($accounts[$this->app->account]);
-
-        if (!\count($accounts)) {
-            throw new Exception("No accounts to move {$this->domain}");
-        }
-
-        $newAccount = $this->app->radio("Select account to move {$this->domain}", array_keys($accounts));
+        $this->accountTo = $this->app->selectAccount("Select account to move {$this->domain}", [$this->accountFrom]);
 
         $ips = [];
 
@@ -131,7 +135,7 @@ class DomainAction extends AbstractAction
             throw new Exception($e->getMessage());
         }
 
-        $this->app->auth($this->app->accounts[$newAccount]);
+        $this->app->auth($this->app->accounts[$this->accountTo]);
 
         try {
             if (!$this->app->isDryRun) {
@@ -188,6 +192,8 @@ class DomainAction extends AbstractAction
         if ($this->app->isDryRun) {
             $this->app->climate->lightCyan()->table($data);
         } else {
+            $this->clearCache();
+
             try {
                 $domainRecords = $this->app->client->domainRecord()->getAll($this->domain);
 
@@ -208,7 +214,7 @@ class DomainAction extends AbstractAction
 
         try {
             // Restore first account
-            $this->app->auth($this->app->accounts[$this->app->account]);
+            $this->app->auth($this->app->accounts[$this->accountFrom]);
 
             $this->app->selectAction();
         } catch (Exception $e) {

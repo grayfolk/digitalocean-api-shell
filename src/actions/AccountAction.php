@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\actions;
 
 use App\App;
+use Cake\Chronos\Chronos;
 use DigitalOceanV2\Entity\Account as AccountEntity;
 use DigitalOceanV2\Exception\ExceptionInterface;
 use Exception;
@@ -73,6 +74,7 @@ class AccountAction extends AbstractAction
             [
                 'API Rate Limit' => $response->getHeaders()['ratelimit-limit'][0] ?? 'unknown',
                 'API Rate Limit Remaining' => $response->getHeaders()['ratelimit-remaining'][0] ?? 'unknown',
+                'API Rate Limit Reset' => $response->getHeaders()['ratelimit-reset'][0] ? Chronos::createFromTimestampUTC((int)$response->getHeaders()['ratelimit-reset'][0])->diffForHumans() : 'unknown',
             ],
         ]);
 
