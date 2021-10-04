@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\actions;
+
+use App\App;
+use Exception;
+
+/**
+ * @author grayfolk
+ */
+class ExitAction extends AbstractAction
+{
+    /**
+     * @var ExitAction
+     */
+    private static ExitAction $instance;
+
+    /**
+     * @var App
+     */
+    public App $app;
+
+    /**
+     * @param App $app
+     */
+    protected function __construct(App $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * @param App $app
+     * @return ExitAction
+     */
+    public static function getInstance(App $app): self
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new static($app);
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function run(): void
+    {
+        exit();
+    }
+}

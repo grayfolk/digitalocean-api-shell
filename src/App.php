@@ -8,6 +8,7 @@ use App\actions\AccountAction;
 use App\actions\CacheAction;
 use App\actions\ChangeAccountAction;
 use App\actions\DomainAction;
+use App\actions\ExitAction;
 use DigitalOceanV2\Client;
 use Exception;
 use League\CLImate\CLImate;
@@ -26,6 +27,7 @@ class App
         'Move domain to another account' => DomainAction::class,
         'Change account' => ChangeAccountAction::class,
         'Clear cache' => CacheAction::class,
+        'Exit' => ExitAction::class,
     ];
 
     /**
