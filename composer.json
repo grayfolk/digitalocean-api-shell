@@ -1,6 +1,7 @@
 {
     "name": "grayfolk/digitalocean-api-shell",
     "type": "project",
+    "license": "MIT",
     "require": {
         "php": "^7.4",
         "ext-curl": "*",
