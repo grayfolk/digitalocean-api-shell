@@ -78,3 +78,4 @@ fabric.properties
 /vendor/
 /accounts.json
 /.php-cs-fixer.cache
+/tmp
