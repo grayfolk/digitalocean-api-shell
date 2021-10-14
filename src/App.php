@@ -78,9 +78,10 @@ class App
     /**
      * @param mixed $excludes
      * @param mixed $message
+     * @param mixed $forceAuth
      * @throws Exception
      */
-    public function selectAccount($message = 'Select DigitalOcean account:', $excludes = []): string
+    public function selectAccount($message = 'Select DigitalOcean account:', $excludes = [], $forceAuth = true): string
     {
         if (!$this->accounts) {
             if (!file_exists('accounts.json') || !is_file('accounts.json') || !is_readable('accounts.json')) {
@@ -110,7 +111,9 @@ class App
 
         $this->account = $this->radio($message, array_keys($accounts));
 
-        $this->auth($this->accounts[$this->account]);
+        if ($forceAuth) {
+            $this->auth($this->accounts[$this->account]);
+        }
 
         return $this->account;
     }

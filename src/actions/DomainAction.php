@@ -94,7 +94,11 @@ class DomainAction extends AbstractAction
 
         try {
             // Save zone file
-            $file = sprintf('./tmp/%s-%s.conf', $this->domain, microtime(true));
+            $dir = sprintf('./tmp/%s', date('Y-m-d'));
+            if (!file_exists($dir) || !is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $file = sprintf('%s/%s-%s.conf', $dir, $this->domain, microtime(true));
             $domain = $this->app->client->domain()->getByName($this->domain);
             file_put_contents($file, $domain->zoneFile);
             $this->app->climate->info("Zone file backuped: {$file}");
@@ -110,7 +114,7 @@ class DomainAction extends AbstractAction
             }
         }
 
-        $this->accountTo = $this->app->selectAccount("Select account to move {$this->domain}", [$this->accountFrom]);
+        $this->accountTo = $this->app->selectAccount("Select account to move {$this->domain}", [$this->accountFrom], false);
 
         $ips = [];
 
@@ -123,6 +127,10 @@ class DomainAction extends AbstractAction
                     $ips[] = $value->data;
                     break;
             }
+        }
+
+        if (!\count($ips)) {
+            $ips[] = '127.0.0.1';
         }
 
         $ip = $this->app->radio('Select domain ip (A or AAAA):', $ips);
