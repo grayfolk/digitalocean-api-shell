@@ -10,8 +10,8 @@ require_once('vendor/autoload.php');
 $app = new App();
 
 try {
-    $app->selectAccount();
-    $app->selectAction();
+  $app->selectAccount();
+  $app->selectAction();
 } catch (Exception $e) {
-    return $app->climate->error($e->getMessage());
+  return $app->climate->error($e->getMessage());
 }
