@@ -79,3 +79,4 @@ fabric.properties
 /accounts.json
 /.php-cs-fixer.cache
 /tmp
+/do
