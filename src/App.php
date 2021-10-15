@@ -15,9 +15,12 @@ use League\CLImate\CLImate;
 
 /**
  * @author grayfolk
+ * @version 1.0.2
  */
 class App
 {
+    public const VERSION = '1.0.2';
+
     /**
      * Available API actions.
      */
@@ -32,17 +35,12 @@ class App
     /**
      * @var string
      */
-    public string $account;
+    public ?string $account = null;
 
     /**
      * @var array
      */
     public array $accounts = [];
-
-    /**
-     * @var string
-     */
-    public string $action;
 
     /**
      * @var array|false|false[]|string[]|null
@@ -68,11 +66,24 @@ class App
     {
         $this->climate = new CLImate();
 
-        $this->climate->clear();
+        $this->drawHeader();
 
         $this->options = getopt('wf::');
 
         $this->isDryRun = !isset($this->options['w']);
+    }
+
+    public function drawHeader(): void
+    {
+        $this->climate->clear();
+
+        $this->climate->bold()->green()->flank(sprintf('DigitalOcean API Console wrapper. v%s', self::VERSION));
+
+        if ($this->account) {
+            $this->climate->bold()->green()->flank(sprintf('You\'re logged as %s', $this->account));
+        }
+
+        $this->climate->br();
     }
 
     /**
@@ -109,19 +120,22 @@ class App
             throw new Exception('No accounts found in accounts.json');
         }
 
-        $this->account = $this->radio($message, array_keys($accounts));
+        $account = $this->radio($message, array_keys($accounts));
 
         if ($forceAuth) {
+            $this->account = $account;
+
             $this->auth($this->accounts[$this->account]);
         }
 
-        return $this->account;
+        return $account;
     }
 
     /**
      * @throws Exception
+     * @param mixed $drawHeader
      */
-    public function auth(string $apiKey): void
+    public function auth(string $apiKey, $drawHeader = true): void
     {
         if (!$this->client) {
             $this->client = new Client();
@@ -130,6 +144,10 @@ class App
         $this->client->authenticate($apiKey);
 
         AccountAction::getInstance($this)->getInfo();
+
+        if ($drawHeader) {
+            $this->drawHeader();
+        }
     }
 
     /**
@@ -139,7 +157,7 @@ class App
     {
         $action = $this->radio('Select what do you want:', array_keys(self::ACTIONS));
 
-        /** @var $className AccountAction|CacheAction|ChangeAccountAction|DomainAction */
+        /** @var $className AccountAction|CacheAction|ChangeAccountAction|DomainAction|ExitAction */
         $className = self::ACTIONS[$action];
 
         try {
@@ -150,6 +168,8 @@ class App
                     $this->climate->red('Working mode active. All changes will be applied.');
                 }
             }
+
+            $this->drawHeader();
 
             $className::getInstance($this)->run();
         } catch (Exception $e) {

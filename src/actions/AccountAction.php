@@ -85,6 +85,9 @@ class AccountAction extends AbstractAction
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function getInfo(): void
     {
         if (!$this->info) {

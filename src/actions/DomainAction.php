@@ -92,20 +92,6 @@ class DomainAction extends AbstractAction
 
         $this->domain = $this->app->radio('Select domain:', ArrayHelper::getColumn($this->domains, 'name'));
 
-        try {
-            // Save zone file
-            $dir = sprintf('./tmp/%s', date('Y-m-d'));
-            if (!file_exists($dir) || !is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
-            $file = sprintf('%s/%s-%s.conf', $dir, $this->domain, microtime(true));
-            $domain = $this->app->client->domain()->getByName($this->domain);
-            file_put_contents($file, $domain->zoneFile);
-            $this->app->climate->info("Zone file backuped: {$file}");
-        } catch (ExceptionInterface $e) {
-            throw new Exception($e->getMessage());
-        }
-
         if (!$this->domainRecords) {
             try {
                 $this->domainRecords = $this->app->client->domainRecord()->getAll($this->domain);
@@ -135,6 +121,27 @@ class DomainAction extends AbstractAction
 
         $ip = $this->app->radio('Select domain ip (A or AAAA):', $ips);
 
+        if (!$this->app->climate->confirm('Continue?')->confirmed()) {
+            $this->app->drawHeader();
+            $this->app->selectAction();
+
+            return;
+        }
+
+        try {
+            // Save zone file
+            $dir = sprintf('./tmp/%s', date('Y-m-d'));
+            if (!file_exists($dir) || !is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $file = sprintf('%s/%s-%s.conf', $dir, $this->domain, microtime(true));
+            $domain = $this->app->client->domain()->getByName($this->domain);
+            file_put_contents($file, $domain->zoneFile);
+            $this->app->climate->info("Zone file backuped: {$file}");
+        } catch (ExceptionInterface $e) {
+            throw new Exception($e->getMessage());
+        }
+
         try {
             if (!$this->app->isDryRun) {
                 $this->app->client->domain()->remove($this->domain);
@@ -143,7 +150,7 @@ class DomainAction extends AbstractAction
             throw new Exception($e->getMessage());
         }
 
-        $this->app->auth($this->app->accounts[$this->accountTo]);
+        $this->app->auth($this->app->accounts[$this->accountTo], false);
 
         try {
             if (!$this->app->isDryRun) {
@@ -219,6 +226,8 @@ class DomainAction extends AbstractAction
                 throw new Exception($e->getMessage());
             }
         }
+
+        $this->app->climate->input('Press Enter to continue...')->prompt();
 
         try {
             // Restore first account
