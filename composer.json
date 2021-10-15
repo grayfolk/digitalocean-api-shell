@@ -35,8 +35,8 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "chmod +x src/digitalocean-api-shell.sh",
             "ln -sf src/digitalocean-api-shell.sh do",
+            "chmod +x do",
             "mkdir -m=777 -p tmp",
             "cp accounts.json.example accounts.json"
         ],
