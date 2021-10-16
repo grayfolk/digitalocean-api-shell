@@ -12,12 +12,12 @@ use Yiisoft\Arrays\ArrayHelper;
 /**
  * @author grayfolk
  */
-class DomainAction extends AbstractAction
+class MoveDomainAction extends AbstractAction
 {
     /**
-     * @var DomainAction
+     * @var MoveDomainAction
      */
-    private static DomainAction $instance;
+    private static MoveDomainAction $instance;
 
     /**
      * @var App
@@ -66,7 +66,7 @@ class DomainAction extends AbstractAction
 
     /**
      * @param App $app
-     * @return DomainAction
+     * @return MoveDomainAction
      */
     public static function getInstance(App $app): self
     {

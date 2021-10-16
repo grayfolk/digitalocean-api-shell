@@ -7,8 +7,8 @@ namespace App;
 use App\actions\AccountAction;
 use App\actions\CacheAction;
 use App\actions\ChangeAccountAction;
-use App\actions\DomainAction;
 use App\actions\ExitAction;
+use App\actions\MoveDomainAction;
 use DigitalOceanV2\Client;
 use Exception;
 use League\CLImate\CLImate;
@@ -26,7 +26,7 @@ class App
      */
     public const ACTIONS = [
         'View account info' => AccountAction::class,
-        'Move domain to another account' => DomainAction::class,
+        'Move domain to another account' => MoveDomainAction::class,
         'Change account' => ChangeAccountAction::class,
         'Clear cache' => CacheAction::class,
         'Exit (or Ctrl+C)' => ExitAction::class,
@@ -159,7 +159,7 @@ class App
     {
         $action = $this->radio('Select what do you want:', array_keys(self::ACTIONS));
 
-        /** @var $className AccountAction|CacheAction|ChangeAccountAction|DomainAction|ExitAction */
+        /** @var $className AccountAction|CacheAction|ChangeAccountAction|MoveDomainAction|ExitAction */
         $className = self::ACTIONS[$action];
 
         try {

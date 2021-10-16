@@ -38,7 +38,7 @@
             "ln -sf src/digitalocean-api-shell.sh do",
             "chmod +x do",
             "mkdir -m=777 -p tmp",
-            "cp accounts.json.example accounts.json"
+            "cp -n accounts.json.example accounts.json"
         ],
         "cs:check": "php-cs-fixer fix --verbose --ansi --show-progress=dots --diff --dry-run --config .php-cs.php",
         "cs:fix": "php-cs-fixer fix --verbose --ansi --show-progress=dots --config .php-cs.php"
