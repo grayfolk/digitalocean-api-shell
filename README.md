@@ -13,4 +13,10 @@ Console utility for working with DigitalOcean API
 * Go to `digitalocean-api-shell` folder and edit `accounts.json`. This is a simple [JSON](https://www.json.org) file with `"username" : "API Key"` pairs. You can use whatever username is convenient for you - it's not related to DigitalOcean and used as alias only (but it shoud be unique) and real DigitalOcean API key. You can obtain API key in your [DigitalOcean Account - API - Personal access tokens - Generate New Token](https://cloud.digitalocean.com/account/api/tokens/new).
 
 ### Running
-Go to `digitalocean-api-shell` folder and run `./do`.
+Go to `digitalocean-api-shell` folder and run `./do`.  
+By default utility will be runned in dry mode, any changes will not be applied. For working mode use -w option: `./do -w`.
+
+### Features
+- [x] Move Domain to another account
+- [ ] Backup Domain(s) zone file
+- [ ] Create new Domain from zone file
