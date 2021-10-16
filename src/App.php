@@ -15,11 +15,11 @@ use League\CLImate\CLImate;
 
 /**
  * @author grayfolk
- * @version 1.0.2
+ * @version 1.0.3
  */
 class App
 {
-    public const VERSION = '1.0.2';
+    public const VERSION = '1.0.3';
 
     /**
      * Available API actions.
@@ -33,7 +33,7 @@ class App
     ];
 
     /**
-     * @var string
+     * @var string|null
      */
     public ?string $account = null;
 
@@ -87,12 +87,13 @@ class App
     }
 
     /**
-     * @param mixed $excludes
-     * @param mixed $message
-     * @param mixed $forceAuth
+     * @param string $message
+     * @param array $excludes
+     * @param bool $forceAuth
+     * @return string
      * @throws Exception
      */
-    public function selectAccount($message = 'Select DigitalOcean account:', $excludes = [], $forceAuth = true): string
+    public function selectAccount(string $message = 'Select DigitalOcean account:', array $excludes = [], bool $forceAuth = true): string
     {
         if (!$this->accounts) {
             if (!file_exists('accounts.json') || !is_file('accounts.json') || !is_readable('accounts.json')) {
@@ -132,10 +133,11 @@ class App
     }
 
     /**
+     * @param string $apiKey
+     * @param bool $drawHeader
      * @throws Exception
-     * @param mixed $drawHeader
      */
-    public function auth(string $apiKey, $drawHeader = true): void
+    public function auth(string $apiKey, bool $drawHeader = true): void
     {
         if (!$this->client) {
             $this->client = new Client();
